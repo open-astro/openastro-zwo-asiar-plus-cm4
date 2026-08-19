@@ -31,7 +31,7 @@ is baked into the image:
 
 | Device | Kernel | Status |
 |--------|--------|--------|
-| ZWO ASIAIR Plus (Pi CM4) | Raspberry Pi OS stock | 🚧 Validation pending |
+| ZWO ASIAIR Plus (Pi CM4) | Raspberry Pi OS stock | ✅ Tested and working |
 
 > **ZWO EAF/EFW:** the stock Raspberry Pi OS kernel ships with HIDRAW
 > enabled, and the image bakes in a udev rule granting device access, so ZWO
