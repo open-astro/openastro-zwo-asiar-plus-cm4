@@ -61,7 +61,7 @@ cd openastro-zwo-asiar-plus-cm4
 
 ### 2. Put the ASIAIR Plus in USB boot mode
 
-<img src="https://www.openastro.net/img/sbc/73dd0fd5-1436-4fb0-8566-2844e455f998.webp" alt="ASIAIR Plus CM4 with the boot pads shorted by a paperclip, USB-C data cable, and 12V power connected" width="500">
+<img src="docs/asiair-plus-boot-mode.webp" alt="ASIAIR Plus CM4 with the boot pads shorted by a paperclip, USB-C data cable, and 12V power connected" width="500">
 
 1. Unplug the ASIAIR Plus (no power).
 2. Open the case and short the two **nRPIBOOT boot pads** on the carrier
