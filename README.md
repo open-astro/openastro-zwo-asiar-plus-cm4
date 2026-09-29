@@ -42,19 +42,59 @@ is baked into the image:
 The ASIAIR Plus's OS lives on the CM4's 32 GB eMMC, reached over USB with
 [rpiboot](https://github.com/raspberrypi/usbboot). The
 [`flash/`](flash/) scripts (Linux, macOS, Windows) handle the whole
-workflow: install rpiboot, **back up the stock ZWO ASIAIR OS** (your only
-way back to stock - do this first), flash the OpenAstro image, and restore
-the stock backup later if you want.
+workflow: install rpiboot, **back up the stock ZWO ASIAIR OS**, flash the
+OpenAstro image, and restore the stock backup later if you want.
 
-To enter USB device-boot mode: short the two nRPIBOOT boot pads on the
-carrier board with a jumper wire, connect a USB-A (computer) to USB-C
-(ASIAIR) data cable, and connect **12V DC power** - the ASIAIR Plus does
-not power up from the USB cable alone. The flash script walks you through it.
+> ⚠️ **Back up first.** The stock ZWO ASIAIR OS is not available for
+> download anywhere - the backup the script makes is your *only* way back
+> to stock. Keep the `images/asiair-stock-backup-*` file somewhere safe.
+
+### 1. Get the scripts
+
+Clone this repository (or use **Code → Download ZIP** on GitHub and
+extract it):
+
+```bash
+git clone https://github.com/open-astro/openastro-zwo-asiar-plus-cm4.git
+cd openastro-zwo-asiar-plus-cm4
+```
+
+### 2. Put the ASIAIR Plus in USB boot mode
+
+<img src="https://www.openastro.net/img/sbc/73dd0fd5-1436-4fb0-8566-2844e455f998.webp" alt="ASIAIR Plus CM4 with the boot pads shorted by a paperclip, USB-C data cable, and 12V power connected" width="500">
+
+1. Unplug the ASIAIR Plus (no power).
+2. Open the case and short the two **nRPIBOOT boot pads** on the carrier
+   board with a paperclip or jumper wire. Keep them shorted.
+3. Connect a **USB-A (computer) to USB-C (ASIAIR Plus)** data cable - a
+   charge-only cable won't work.
+4. Connect **12V DC power**. Unlike most CM4 boards, the ASIAIR Plus does
+   **not** power up from the USB cable alone.
+
+The script pauses and walks you through this, so you can also start the
+script first and follow its prompts.
+
+### 3. Run the flash script
+
+**Linux / macOS:**
 
 ```bash
 cd flash
 ./openastro-flash.sh
 ```
+
+**Windows:** open **PowerShell as Administrator** (Start menu → type
+*PowerShell* → right-click → *Run as administrator*), change to the
+repository folder, and run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\flash\openastro-flash.ps1
+```
+
+(`-ExecutionPolicy Bypass` lets Windows run the script without changing any
+system-wide settings.)
+
+Both show the same menu:
 
 ```
   1) Backup  - save the stock ZWO ASIAIR OS from the eMMC (do this first!)
@@ -62,12 +102,40 @@ cd flash
   3) Restore - write a stock backup back to the eMMC
 ```
 
-Everything else is automatic: rpiboot installs on first use, and Flash
-downloads the latest release image if it isn't already in `images/`.
-(Windows: `flash\openastro-flash.ps1` in an Administrator PowerShell, same
-menu - see [`flash/README.md`](flash/README.md).)
+Run **1) Backup** first, then **2) Flash**. Unplug and replug the USB
+cable and power between runs (keep the pads shorted) so the board re-enters
+boot mode - Flash also offers to make the backup for you if none exists.
 
-Then power on. The 12V outputs and USB ports come up with the board.
+Everything else is automatic: rpiboot installs on first use, Flash
+downloads the latest release image (checksum-verified) if it isn't already
+in `images/`, and every write is verified by reading it back off the eMMC.
+Wait for **"Verification PASSED"**.
+
+**Windows notes:**
+
+- rpiboot comes from the official Raspberry Pi installer - accept its
+  driver prompts. If the USB boot driver didn't install, the script
+  installs it for you.
+- The release image is `.xz`, which Windows can't open natively. The
+  script uses the `xz.exe` that ships with
+  [Git for Windows](https://git-scm.com/download/win), or
+  [7-Zip](https://www.7-zip.org) - install either one if you have neither.
+  The image is decompressed on the fly straight onto the eMMC; no extra
+  disk space is needed.
+- While the script runs it suppresses Windows' *"You need to format the
+  disk"* popup. If one appears anyway, click **Cancel** - never Format.
+  Windows just can't read the Linux partitions.
+
+See [`flash/README.md`](flash/README.md) for more detail.
+
+### 4. Boot OpenAstro
+
+Disconnect USB, **remove the paperclip/jumper**, and power-cycle. The 12V
+outputs and USB ports come up with the board, and the buzzer plays the
+OpenAstro jingle when it's ready.
+
+To go back to stock later, enter boot mode the same way and choose
+**3) Restore**.
 
 ## First boot defaults
 

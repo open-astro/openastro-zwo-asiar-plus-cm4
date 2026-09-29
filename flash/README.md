@@ -33,8 +33,8 @@ Just run the script with no arguments and pick from the menu:
 ```
 
 ```powershell
-# Windows (Administrator PowerShell)
-.\openastro-flash.ps1
+# Windows (Administrator PowerShell, from the repository folder)
+powershell -ExecutionPolicy Bypass -File .\flash\openastro-flash.ps1
 ```
 
 ```
@@ -82,13 +82,16 @@ Each backup/flash/restore run walks you through the same steps:
   script installs deps via apt). Backups are `.img.xz`.
 - **macOS**: rpiboot comes from Homebrew (source-build fallback included).
   Uses `/dev/rdiskN` raw nodes for speed. Backups are `.img.xz`.
-- **Windows**: rpiboot comes from the official installer (includes the boot
-  driver) in the usbboot releases. Backups are `.img.gz` (native .NET gzip;
-  no xz on stock Windows). Flashing the released `.img.xz` needs
-  [7-Zip](https://www.7-zip.org) installed - the script finds it and
-  decompresses automatically (or use
-  [Raspberry Pi Imager](https://www.raspberrypi.com/software/) pointed at
-  the disk rpiboot exposes).
+- **Windows**: run from an **Administrator** PowerShell. rpiboot comes
+  from the official installer in the usbboot releases; if its USB boot
+  driver (WinUSB for `BCM2711 Boot`) didn't get installed, the script
+  installs it. Backups are `.img.gz` (native .NET gzip; no xz on stock
+  Windows). The released `.img.xz` is decompressed on the fly straight
+  onto the eMMC (no extracted copy on disk) using the `xz.exe` bundled with
+  [Git for Windows](https://git-scm.com/download/win), or
+  [7-Zip](https://www.7-zip.org) if Git isn't installed. Windows' *"You
+  need to format the disk"* popup is suppressed while the script runs - if
+  one appears anyway, click **Cancel**, never Format.
 
 ## Restoring stock ZWO ASIAIR
 
