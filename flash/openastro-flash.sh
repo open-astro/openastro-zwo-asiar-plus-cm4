@@ -60,12 +60,14 @@ ensure_rpiboot() {
         brew install rpiboot || {
             # No bottle for this platform: build from source.
             brew install libusb pkg-config
-            local src; src="$(mktemp -d)"
+            local src prefix
+            src="$(mktemp -d)"
+            prefix="$(brew --prefix)"
             git clone --depth 1 https://github.com/raspberrypi/usbboot "$src/usbboot"
             make -C "$src/usbboot"
-            sudo install -m 755 "$src/usbboot/rpiboot" /usr/local/bin/rpiboot
-            sudo mkdir -p /usr/local/share/rpiboot
-            sudo cp -R "$src/usbboot/mass-storage-gadget64" /usr/local/share/rpiboot/ 2>/dev/null || true
+            sudo install -m 755 "$src/usbboot/rpiboot" "$prefix/bin/rpiboot"
+            sudo mkdir -p "$prefix/share/rpiboot"
+            sudo cp -R "$src/usbboot/mass-storage-gadget64" "$prefix/share/rpiboot/" 2>/dev/null || true
             rm -rf "$src"
         }
         ;;
@@ -161,10 +163,17 @@ run_rpiboot_and_find_device() {
         # The mass-storage gadget exports the eMMC as a USB disk. Plain
         # 'rpiboot' does NOT load it (it just boots the board normally), so
         # try the gadget dir name and the known install locations.
-        sudo rpiboot -d mass-storage-gadget64 ||
-            sudo rpiboot -d /usr/share/rpiboot/mass-storage-gadget64 ||
-            sudo rpiboot -d /usr/local/share/rpiboot/mass-storage-gadget64 ||
-            die "rpiboot could not load the mass-storage gadget (mass-storage-gadget64 not found)."
+        local gadget_dir=""
+        for _d in \
+            mass-storage-gadget64 \
+            /usr/share/rpiboot/mass-storage-gadget64 \
+            /usr/local/share/rpiboot/mass-storage-gadget64 \
+            "$(brew --prefix 2>/dev/null)/share/rpiboot/mass-storage-gadget64"; do
+            [ -d "$_d" ] && { gadget_dir="$_d"; break; }
+        done
+        [ -n "$gadget_dir" ] || die "rpiboot mass-storage-gadget64 directory not found. On macOS, reinstall with: brew reinstall rpiboot"
+        sudo rpiboot -d "$gadget_dir" ||
+            die "rpiboot failed to load the mass-storage gadget."
 
         log "Waiting for the eMMC to appear as a USB disk..."
         for _ in $(seq 1 60); do

@@ -80,8 +80,11 @@ Each backup/flash/restore run walks you through the same steps:
 
 - **Linux**: rpiboot is built from source (needs `libusb-1.0-0-dev`; the
   script installs deps via apt). Backups are `.img.xz`.
-- **macOS**: rpiboot comes from Homebrew (source-build fallback included).
-  Uses `/dev/rdiskN` raw nodes for speed. Backups are `.img.xz`.
+- **macOS**: install rpiboot with `brew install rpiboot` (or let the script
+  install it for you). The script automatically finds the
+  `mass-storage-gadget64` data directory under the Homebrew prefix (works on
+  both Apple Silicon `/opt/homebrew` and Intel `/usr/local`). Uses
+  `/dev/rdiskN` raw nodes for speed. Backups are `.img.xz`.
 - **Windows**: run from an **Administrator** PowerShell. rpiboot comes
   from the official installer in the usbboot releases; if its USB boot
   driver (WinUSB for `BCM2711 Boot`) didn't get installed, the script
