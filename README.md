@@ -74,7 +74,16 @@ cd openastro-zwo-asiar-plus-cm4
 The script pauses and walks you through this, so you can also start the
 script first and follow its prompts.
 
-### 3. Run the flash script
+### 3. Install rpiboot (macOS only)
+
+On macOS, install rpiboot with [Homebrew](https://brew.sh) before running the
+script (or let the script install it for you):
+
+```bash
+brew install rpiboot
+```
+
+### 4. Run the flash script
 
 **Linux / macOS:**
 
@@ -128,7 +137,7 @@ Wait for **"Verification PASSED"**.
 
 See [`flash/README.md`](flash/README.md) for more detail.
 
-### 4. Boot OpenAstro
+### 5. Boot OpenAstro
 
 Disconnect USB, **remove the paperclip/jumper**, and power-cycle. The 12V
 outputs and USB ports come up with the board, and the buzzer plays the
